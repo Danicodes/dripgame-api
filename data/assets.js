@@ -20,22 +20,22 @@ const category = require('./assetCategory');
  * @param {string} filename - obtained/generated on download
  * @param {object} assetExtra - Object containing any extra data specific to the type of asset given - color, brand, style (anime,pixel...) etc
  */
-async function createAsset(modelID, assetCategory, assetLabel, assetImage, contributorID, imageMetadata = null, assetExtra = {}){
+async function createAsset(modelID, assetCategory, assetLabel, assetImage, contributorusername, imageMetadata = null, assetExtra = {}){
     // TBD can we determine if a duplicate image is being uploaded?
-    if (!assetCategory || !assetLabel || !assetImage || !contributorID || !modelID){
+    if (!assetCategory || !assetLabel || !assetImage || !contributorusername || !modelID){
         throw "Error: must provide category, label, contributorID, and imageUrl";
     }
 
     assetCategory = validate.validateCategory(assetCategory);
     modelID = validate.validateId(modelID); // try to convert to object id, throw if invalid
-    contributorID = validate.validateId(contributorID);
 
     // check model id -- Have to assume it was created prior 
     let model = await modelData.getModelById(modelID);
     if (!model._id) {
         throw `Error: model must be created before the asset for it can be created`;
     }
-    let contributor = await contributorsData.getContributorById(contributorID);
+
+    let contributor = await contributorsData.getContributorByUsername(contributorusername);
     if (!contributor._id) {
         throw `Error: contributor must be created before the asset can be created`;
     }
@@ -47,7 +47,7 @@ async function createAsset(modelID, assetCategory, assetLabel, assetImage, contr
         "label": assetLabel, // unique?
         "imageURL": assetImage,
         "imageMetadata": imageMetadata ? imageMetadata : null,
-        "contributorID": contributorID,
+        "contributorID": contributor._id,
         "approved": false,
         "rejected": false,
         "published": false,
@@ -82,6 +82,9 @@ async function approveAsset(assetId) {
     let assetApproved = {
         "approved": true
     };
+
+    let _huh = await assetsDB.findOne({'_id': assetId});
+    console.log(_huh);
 
     let updatedObj = await assetsDB.updateOne({'_id': assetId}, { $set: assetApproved });
     if (updatedObj['modifiedCount'] !== 1)
@@ -150,7 +153,7 @@ async function getAssetByUrl(url){
 
     let assetsDB = await assets();
 
-    let foundAssets = await assetsDB.find({ 'imageURL': url });
+    let foundAssets = await assetsDB.find({ 'imageURL': url }).toArray();
     if (!foundAssets) {
         return null;
     }
@@ -167,6 +170,11 @@ async function getAssetsByCategory(assetCategory){
     return foundAssets;
 }
 
+/**
+ * 
+ * @param {string} assetImage 
+ * @returns 
+ */
 async function getAssetByFilename(assetImage) {
     let assetsDB = await assets();
     let asset = await assetsDB.findOne({'file': assetImage});
@@ -186,6 +194,10 @@ async function getAssets() {
     return assetObjects.toArray();
 }
 
+function getAllAssetCategories(){
+    return category.getAll();
+}
+
 module.exports = {
     createAsset,
     approveAsset,
@@ -196,5 +208,6 @@ module.exports = {
     getAssetsByCategory,
     getAssetsByColor,
     getAssetByUrl,
-    getAssets
+    getAssets,
+    getAllAssetCategories,
 };

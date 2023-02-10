@@ -6,19 +6,23 @@ class Category {
     static Tops = new Category("Tops");
     static Bottoms = new Category("Bottoms");
     static Shoes = new Category("Shoes");
-    static Poses = new Category("Poses"); // don't want to conflate models and poses
+    static Models = new Category("Models"); // don't want to conflate models and poses
     static Hair = new Category("Hair");
     static Face = new Category("Face");
     static Accessories = new Category("Accessories");
     static Set = new Category("Set"); // Replacing suit
+    static Background = new Category("Background"); //
 
     static get(string) {
         switch(string.trim().toLowerCase()) {
-            case "tops" || "top":
+            case "tops":
+            case "top":
                 return this.Tops;
-            case "bottoms" || "bottom":
+            case "bottoms":
+            case "bottom":
                 return this.Bottoms;
-            case "shoes" || "shoe":
+            case "shoes":
+            case "shoe":
                 return this.Shoes;
             case "hair":
                 return this.Hair;
@@ -26,12 +30,34 @@ class Category {
                 return this.Face;
             case "accessories":
                 return this.Accessories;
-            case "set" || "suit":
+            case "set":
+            case "suit":
                 return this.Set;
+            case "model":
+            case "pose":
+                return this.Models 
+            case "background":
+            case "backdrop":
+                return this.Background
             default:
                 throw `Error: Undefined Category`;
         }
     }
+
+    static getAll() {
+        return [
+            this.Tops.name,
+            this.Bottoms.name,
+            this.Shoes.name,
+            this.Models.name,
+            this.Hair.name,
+            this.Face.name,
+            this.Accessories.name,
+            this.Set.name,
+            this.Background.name
+        ]
+    }
+
 }
 
 module.exports = Category;

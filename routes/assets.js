@@ -1,12 +1,24 @@
 const express = require('express');
+const { assets } = require('../config/mongoCollections');
 const router = express.Router();
 
 const assetsData = require('../data/assets');
 
-router
-.route('/file/:assetUrl')
+router.route('/categories')
 .get(async(req, res) => {
-    let assetUrl = req.params.assetUrl;
+    try {
+        let categories = assetsData.getAllAssetCategories();
+        res.status(200).send({data: categories});
+    }
+    catch(e) {
+        res.status(500).json({message: `Bad things happened ${e}`});
+    }
+})
+
+router
+.route('/file')
+.get(async(req, res) => { 
+    let assetUrl = req.query.assetUrl;
 
     try {
         let asset = await assetsData.getAssetByUrl(assetUrl);
@@ -69,7 +81,7 @@ router
     
     try {
         let approved = await assetsData.approveAsset(assetId);
-        res.status(204)
+        res.status(200).send({"approved": true})
     }
     catch(e) {
         res.status(500).json({error: `Dude idunno ${e}`});
@@ -82,7 +94,7 @@ router.route('/:assetId/reject')
     let assetId = req.params.assetId;
     try {
         let rejected = await assetsData.rejectAsset(assetId);
-        res.status(204) // should probs send some data tho
+        res.status(200).send({"rejected": true}) // should probs send some data tho
     }
     catch(e) {
         res.status(500).json({error: `Dude idunno ${e}`});

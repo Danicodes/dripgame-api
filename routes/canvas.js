@@ -11,8 +11,11 @@ router.route('/download')
         url: url,
         responseType: 'stream'
     }).then(function(response) {
-        response.data.pipe(res)
-    });
+            response.data.pipe(res)
+    }).catch(err => {
+            console.log(err);
+            res.status(400).send(err);
+        });
     //res.status(200).send(response);
 });
 

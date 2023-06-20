@@ -20,5 +20,6 @@ module.exports = {
   assets: getCollectionFn('assets'),
   contributors: getCollectionFn('contributors'),
   models: getCollectionFn('models'),
-  reports: getCollectionFn('reports')
+  reports: getCollectionFn('reports'),
+  admins: getCollectionFn('admins')
 };

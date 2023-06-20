@@ -4,6 +4,7 @@ const models = require('./models');
 const canvas = require('./canvas');
 const twitch = require('./twitch');
 const reports = require('./reports');
+const admins = require('./admins');
 
 function constructorMethod(app){
     app.use('/assets', assets);
@@ -12,6 +13,7 @@ function constructorMethod(app){
     app.use('/canvas', canvas);
     app.use('/twitch', twitch);
     app.use('/reports', reports);
+    app.use('/admins', admins);
 
 
     app.use('*', (req, res) => {
